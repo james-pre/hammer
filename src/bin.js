@@ -1,11 +1,9 @@
 import * as fs from 'fs';
 import * as hammer from './index.js';
 
-const flags = process.argv
-	.filter((a) => a.startsWith('-'))
-	.map((f) => f.replace(/^-+/, ' ').trimStart());
+const flags = process.argv.filter(a => a.startsWith('-')).map(f => f.replace(/^-+/, ' ').trimStart());
 
-const args = process.argv.slice(1).filter((a) => !a.startsWith('-'));
+const args = process.argv.slice(1).filter(a => !a.startsWith('-'));
 
 if (!args[1]) {
 	console.log(`Error: no input file specified`);

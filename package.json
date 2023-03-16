@@ -5,7 +5,9 @@
 	"type": "module",
 	"bin": "src/bin.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"format:check": "prettier src/**/* --check",
+		"format:fix": "prettier src/**/* --write",
+		"test": "node src/bin.js -t test/asm.ham"
 	},
 	"repository": {
 		"type": "git",

@@ -1,10 +1,12 @@
+//AT&T assembly
+
 ws = /\s+/;
 comma = /,/;
 nl = /\n/;
 comment = /;.*/;
 
 reg_addr = /%(R|E)?(([ABCD][XHL])|((SP|BP|SI|DI)L?))/;
-literal_num = /$[\d]+/;
+literal_num = /\$[\d]+/;
 mem_addr_raw = /[\d]+/;
 
 mem_addr_part = reg_addr | literal_num | mem_addr_raw;

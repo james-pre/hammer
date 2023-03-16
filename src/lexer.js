@@ -1,30 +1,33 @@
 import Token from './token.js';
 
 export const tokens = new Map([
-	['regex', [{ pattern: new RegExp(String.raw`\/((?![*+?])(?:[^\r\n\[/\\]|\\.|\[(?:[^\r\n\]\\]|\\.)*\])+)\/`) }]],
-	['comment', [{ pattern: String.raw`\/\/(.*)` }, { pattern: String.raw`\/\*(.*)\*\/.?` }]],
-	['whitespace', [{ pattern: String.raw`\s+` }]],
-	['identifier', [{ pattern: String.raw`[\w_]+`, flags: 'i' }]],
-	['newline', [{ pattern: String.raw`\n` }]],
-	['operator', [{ pattern: ``}]]
+	['regex', /\/((?![*+?])(?:[^\r\n\[/\\]|\\.|\[(?:[^\r\n\]\\]|\\.)*\])+)\//],
+	['comment', /\/\/(.*)|\/\*(.*)\*\/.?/],
+	['whitespace', /\s+/],
+	['identifier', /[\w_]+|\$/i],
+	['newline', /\n/],
+	['assignment', /=/],
+	['or', /\|/],
+	['end_of_line', /;/],
+	['function_lambda', /->/],
+	['optional', /\?/],
+	['group_start', /\[/],
+	['group_end', /\]/],
+	['block_start', /{/],
+	['block_end', /}/],
 ]);
 
 export async function tokenize(str) {
-	let cursor = 0,
-		i = 0;
+	let cursor = 0;
 
 	const matchedTokens = [];
-	while (cursor < str.length && i < 200) {
-		i++;
+	while (cursor < str.length) {
 		let matchs = [];
 		const sliced = str.slice(cursor);
-		for (let [id, patterns] of tokens) {
-			for (let re of patterns) {
-				const match = re.exec(sliced);
-				if (match) {
-					matchs.push({ id, match });
-					break;
-				}
+		for (let [id, re] of tokens) {
+			const match = re.exec(sliced);
+			if (match) {
+				matchs.push({ id, match });
 			}
 		}
 
@@ -32,8 +35,8 @@ export async function tokenize(str) {
 
 		if (id) {
 			const lineno = [...str.slice(0, cursor).matchAll('\n')].length + 1;
-			const colno = cursor - str.lastIndexOf('\n', cursor);
-			cursor += match[0].length;
+			const colno = cursor - str.lastIndexOf('\n', cursor - 1);
+			cursor += match.index + match[0].length;
 			matchedTokens.push(new Token(id, match, lineno, colno));
 		} else {
 			cursor++;

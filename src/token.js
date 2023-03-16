@@ -7,7 +7,7 @@ export default class Token {
 		Object.assign(this, { type, match, lineno, colno });
 	}
 
-	get value(){
+	get value() {
 		return this.match[0].match;
 	}
 
