@@ -1,0 +1,31 @@
+ws = /\s+/;
+comma = /,/;
+nl = /\n/;
+comment = /;.*/;
+
+reg_addr = /%(R|E)?(([ABCD][XHL])|((SP|BP|SI|DI)L?))/;
+literal_num = /$[\d]+/;
+mem_addr_raw = /[\d]+/;
+
+mem_addr_part = reg_addr | literal_num | mem_addr_raw;
+_mem_paran = $ -> /\(/$/\)/;
+addr_mem = $ -> {
+	[mem_addr_part /:/]?
+	/-?[\d]+/?
+	_mem_paran(
+		mem_addr_part
+		[comma mem_addr_part]?
+		/,[\d]+/?
+	)?
+}
+
+operand_src = reg_addr | literal_num | addr_mem;
+operand_dst = reg_addr | addr_mem;
+operator = /[\w]+/;
+
+token { comment, ws, nl, comma, reg_addr, literal_num, mem_addr_raw, operator }
+
+instruction = $ -> ws? operator ws? operand_src ws? [comma ws? operand_dst]? ws? comment? $
+end = $ -> \EOF
+
+grammer { instruction, end }
